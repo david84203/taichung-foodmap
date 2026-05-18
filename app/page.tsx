@@ -1,65 +1,132 @@
-import Image from "next/image";
+'use client'
+import { useState, useEffect } from 'react'
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore'
+import { db } from '@/lib/firebase'
+import { Place, FoodCategory, PlaceStatus } from '@/lib/types'
+import dynamic from 'next/dynamic'
+import PlaceCard from '@/components/PlaceCard'
+import FilterBar from '@/components/FilterBar'
+import AddPlaceModal from '@/components/AddPlaceModal'
+
+const MapView = dynamic(() => import('@/components/MapView'), { ssr: false })
 
 export default function Home() {
+  const [places, setPlaces]               = useState<Place[]>([])
+  const [selectedPlace, setSelectedPlace] = useState<Place | null>(null)
+  const [showAdd, setShowAdd]             = useState(false)
+  const [filterCategory, setFilterCategory] = useState<FoodCategory | null>(null)
+  const [filterStatus, setFilterStatus]   = useState<PlaceStatus | null>(null)
+  const [loading, setLoading]             = useState(true)
+
+  useEffect(() => {
+    loadPlaces()
+  }, [])
+
+  async function loadPlaces() {
+    const snap = await getDocs(collection(db, 'foodmap'))
+    const data = snap.docs.map(d => ({ id: d.id, ...d.data() } as Place))
+    data.sort((a, b) => b.addedAt - a.addedAt)
+    setPlaces(data)
+    setLoading(false)
+  }
+
+  async function handleAdd(placeData: Omit<Place, 'id' | 'addedAt'>) {
+    const now    = Date.now()
+    const docRef = await addDoc(collection(db, 'foodmap'), { ...placeData, addedAt: now })
+    setPlaces(prev => [{ ...placeData, id: docRef.id, addedAt: now }, ...prev])
+    setShowAdd(false)
+  }
+
+  async function handleDelete(place: Place) {
+    await deleteDoc(doc(db, 'foodmap', place.id))
+    setPlaces(prev => prev.filter(p => p.id !== place.id))
+    if (selectedPlace?.id === place.id) setSelectedPlace(null)
+  }
+
+  async function handleToggleStatus(place: Place) {
+    const next: PlaceStatus = place.status === 'want' ? 'visited' : 'want'
+    await updateDoc(doc(db, 'foodmap', place.id), { status: next })
+    setPlaces(prev => prev.map(p => p.id === place.id ? { ...p, status: next } : p))
+    setSelectedPlace(prev => prev?.id === place.id ? { ...prev, status: next } : prev)
+  }
+
+  async function handleUpdateNote(place: Place, note: string) {
+    await updateDoc(doc(db, 'foodmap', place.id), { note })
+    setPlaces(prev => prev.map(p => p.id === place.id ? { ...p, note } : p))
+    setSelectedPlace(prev => prev?.id === place.id ? { ...prev, note } : prev)
+  }
+
+  const filtered = places.filter(p => {
+    if (filterCategory && p.category !== filterCategory) return false
+    if (filterStatus   && p.status   !== filterStatus)   return false
+    return true
+  })
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="h-screen flex flex-col bg-white overflow-hidden">
+      <header className="flex items-center justify-between px-4 py-3 border-b border-gray-100 shrink-0">
+        <div className="flex items-center gap-2">
+          <span className="text-xl">🗺️</span>
+          <h1 className="font-bold text-gray-800">台中美食地圖</h1>
+          <span className="text-sm text-gray-400">Lu &amp; Han</span>
+        </div>
+        <button
+          onClick={() => setShowAdd(true)}
+          className="bg-orange-500 text-white px-4 py-1.5 rounded-full text-sm font-medium hover:bg-orange-600 transition-colors"
+        >
+          + 新增
+        </button>
+      </header>
+
+      <div className="flex-1 flex overflow-hidden">
+        <aside className="w-80 flex flex-col border-r border-gray-100 overflow-hidden shrink-0">
+          <FilterBar
+            activeCategory={filterCategory}
+            activeStatus={filterStatus}
+            onCategoryChange={setFilterCategory}
+            onStatusChange={setFilterStatus}
+            total={filtered.length}
+          />
+          <div className="flex-1 overflow-y-auto p-3 space-y-2">
+            {loading ? (
+              <p className="text-sm text-gray-400 text-center mt-10">載入中...</p>
+            ) : filtered.length === 0 ? (
+              <p className="text-sm text-gray-400 text-center mt-10">
+                {places.length === 0
+                  ? '點右上角「新增」加入第一家 🍜'
+                  : '沒有符合條件的餐廳'}
+              </p>
+            ) : (
+              filtered.map(place => (
+                <PlaceCard
+                  key={place.id}
+                  place={place}
+                  selected={selectedPlace?.id === place.id}
+                  onClick={() => setSelectedPlace(prev => prev?.id === place.id ? null : place)}
+                  onDelete={() => handleDelete(place)}
+                  onToggleStatus={() => handleToggleStatus(place)}
+                  onUpdateNote={note => handleUpdateNote(place, note)}
+                />
+              ))
+            )}
+          </div>
+        </aside>
+
+        <main className="flex-1 relative">
+          <MapView
+            places={filtered}
+            selectedPlace={selectedPlace}
+            onSelectPlace={setSelectedPlace}
+          />
+        </main>
+      </div>
+
+      {showAdd && (
+        <AddPlaceModal
+          onAdd={handleAdd}
+          onClose={() => setShowAdd(false)}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      )}
     </div>
-  );
+  )
 }

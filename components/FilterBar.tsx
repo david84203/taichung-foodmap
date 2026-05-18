@@ -1,0 +1,51 @@
+'use client'
+import { ALL_CATEGORIES, FoodCategory, PlaceStatus } from '@/lib/types'
+
+interface Props {
+  activeCategory: FoodCategory | null
+  activeStatus: PlaceStatus | null
+  onCategoryChange: (c: FoodCategory | null) => void
+  onStatusChange: (s: PlaceStatus | null) => void
+  total: number
+}
+
+export default function FilterBar({ activeCategory, activeStatus, onCategoryChange, onStatusChange, total }: Props) {
+  return (
+    <div className="p-3 border-b border-gray-100 space-y-2">
+      <div className="flex items-center justify-between">
+        <div className="flex gap-1.5">
+          {([null, 'want', 'visited'] as (PlaceStatus | null)[]).map(s => (
+            <button
+              key={String(s)}
+              onClick={() => onStatusChange(s)}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                activeStatus === s
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {s === null ? '全部' : s === 'want' ? '想去' : '已去過'}
+            </button>
+          ))}
+        </div>
+        <span className="text-xs text-gray-400">{total} 間</span>
+      </div>
+
+      <div className="flex gap-1 flex-wrap">
+        {ALL_CATEGORIES.map(c => (
+          <button
+            key={c}
+            onClick={() => onCategoryChange(c === activeCategory ? null : c)}
+            className={`px-2 py-0.5 rounded-full text-xs transition-colors ${
+              activeCategory === c
+                ? 'bg-orange-500 text-white'
+                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+            }`}
+          >
+            {c}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
