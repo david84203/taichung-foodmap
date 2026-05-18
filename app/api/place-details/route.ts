@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
 
   const res = await fetch(`https://places.googleapis.com/v1/places/${placeId}?languageCode=zh-TW`, {
     headers: {
-      'X-Goog-Api-Key': process.env.GOOGLE_PLACES_API_KEY!,
+      'X-Goog-Api-Key': (process.env.GOOGLE_PLACES_API_KEY ?? '').replace(/^﻿/, ''),
       'X-Goog-FieldMask': fieldMask,
     },
   })

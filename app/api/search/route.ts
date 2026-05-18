@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
-      'X-Goog-Api-Key': process.env.GOOGLE_PLACES_API_KEY!,
+      'X-Goog-Api-Key': (process.env.GOOGLE_PLACES_API_KEY ?? '').replace(/^﻿/, ''),
       'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.location,places.types',
     },
     body: JSON.stringify({
@@ -19,10 +19,7 @@ export async function GET(req: NextRequest) {
       maxResultCount: 3,
     }),
   })
-  const rawText = await res.text()
-  console.log('[search] status:', res.status, 'body:', rawText.slice(0, 300))
-  if (!res.ok) return NextResponse.json({ error: `Places API ${res.status}`, detail: rawText.slice(0, 200) }, { status: 502 })
-  const data = JSON.parse(rawText)
+  const data = await res.json()
 
   const results = (data.places ?? []).map((r: {
     id: string
