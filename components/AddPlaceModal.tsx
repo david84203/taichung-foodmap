@@ -13,7 +13,7 @@ interface SearchResult {
 }
 
 interface Props {
-  onAdd: (place: Omit<Place, 'id' | 'addedAt'>) => void
+  onAdd: (place: Omit<Place, 'id' | 'addedAt'>) => Promise<void>
   onClose: () => void
 }
 
@@ -50,7 +50,7 @@ export default function AddPlaceModal({ onAdd, onClose }: Props) {
       const res    = await fetch(`/api/place-details?id=${result.placeId}`)
       const detail = await res.json()
       const category = categorizePlace(detail.types, detail.name)
-      onAdd({
+      await onAdd({
         placeId:    detail.placeId,
         name:       detail.name,
         address:    detail.address,
