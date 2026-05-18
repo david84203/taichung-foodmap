@@ -21,7 +21,8 @@ export default function AddPlaceModal({ onAdd, onClose }: Props) {
   const [query, setQuery]     = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
   const [selected, setSelected] = useState<SearchResult | null>(null)
-  const [note, setNote]       = useState('')
+  const [notePublic, setNotePublic]   = useState('')
+  const [notePrivate, setNotePrivate] = useState('')
   const [status, setStatus]   = useState<PlaceStatus>('want')
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState('')
@@ -62,7 +63,9 @@ export default function AddPlaceModal({ onAdd, onClose }: Props) {
         rating:     detail.rating,
         mapsUrl:    detail.mapsUrl,
         status,
-        note,
+        note: '',
+        notePublic,
+        notePrivate,
       })
     } catch {
       setError('加入失敗，請稍後再試')
@@ -144,15 +147,27 @@ export default function AddPlaceModal({ onAdd, onClose }: Props) {
                 </div>
               </div>
 
-              <div className="mb-5">
-                <p className="text-xs font-medium text-gray-600 mb-2">備註（選填）</p>
-                <textarea
-                  value={note}
-                  onChange={e => setNote(e.target.value)}
-                  placeholder="Han 說湯很棒、停車很難找..."
-                  className="w-full border rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none"
-                  rows={3}
-                />
+              <div className="mb-5 grid grid-cols-2 gap-3">
+                <div>
+                  <p className="text-xs font-medium text-gray-600 mb-2">🌐 網友說（選填）</p>
+                  <textarea
+                    value={notePublic}
+                    onChange={e => setNotePublic(e.target.value)}
+                    placeholder="網路評價、推薦菜色..."
+                    className="w-full border rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none"
+                    rows={3}
+                  />
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-gray-600 mb-2">📝 我們紀錄（選填）</p>
+                  <textarea
+                    value={notePrivate}
+                    onChange={e => setNotePrivate(e.target.value)}
+                    placeholder="自己的心得、停車資訊..."
+                    className="w-full border rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none"
+                    rows={3}
+                  />
+                </div>
               </div>
 
               {error && <p className="text-xs text-red-500 mb-3">{error}</p>}

@@ -50,10 +50,10 @@ export default function Home() {
     setSelectedPlace(prev => prev?.id === place.id ? { ...prev, status: next } : prev)
   }
 
-  async function handleUpdateNote(place: Place, note: string) {
-    await updateDoc(doc(db, 'foodmap', place.id), { note })
-    setPlaces(prev => prev.map(p => p.id === place.id ? { ...p, note } : p))
-    setSelectedPlace(prev => prev?.id === place.id ? { ...prev, note } : prev)
+  async function handleUpdateNotes(place: Place, notePublic: string, notePrivate: string) {
+    await updateDoc(doc(db, 'foodmap', place.id), { notePublic, notePrivate })
+    setPlaces(prev => prev.map(p => p.id === place.id ? { ...p, notePublic, notePrivate } : p))
+    setSelectedPlace(prev => prev?.id === place.id ? { ...prev, notePublic, notePrivate } : prev)
   }
 
   const filtered = places.filter(p => {
@@ -105,7 +105,7 @@ export default function Home() {
                   onClick={() => setSelectedPlace(prev => prev?.id === place.id ? null : place)}
                   onDelete={() => handleDelete(place)}
                   onToggleStatus={() => handleToggleStatus(place)}
-                  onUpdateNote={note => handleUpdateNote(place, note)}
+                  onUpdateNotes={(pub, priv) => handleUpdateNotes(place, pub, priv)}
                 />
               ))
             )}

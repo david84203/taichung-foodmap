@@ -7,12 +7,12 @@ interface Props {
   onClick: () => void
   onDelete: () => void
   onToggleStatus: () => void
-  onUpdateNote: (note: string) => void
+  onUpdateNotes: (notePublic: string, notePrivate: string) => void
 }
 
 const PRICE = ['', '$', '$$', '$$$', '$$$$']
 
-export default function PlaceCard({ place, selected, onClick, onDelete, onToggleStatus, onUpdateNote }: Props) {
+export default function PlaceCard({ place, selected, onClick, onDelete, onToggleStatus, onUpdateNotes }: Props) {
   return (
     <div
       className={`border rounded-xl p-3 cursor-pointer transition-colors ${
@@ -56,14 +56,30 @@ export default function PlaceCard({ place, selected, onClick, onDelete, onToggle
           {place.phone && (
             <p className="text-xs text-gray-600">📞 {place.phone}</p>
           )}
-          <textarea
-            value={place.note}
-            onChange={e => { e.stopPropagation(); onUpdateNote(e.target.value) }}
-            onClick={e => e.stopPropagation()}
-            placeholder="寫下備註..."
-            className="w-full text-xs border rounded-lg p-2 resize-none focus:outline-none focus:ring-1 focus:ring-orange-400 bg-white"
-            rows={2}
-          />
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <p className="text-xs font-medium text-gray-500 mb-1">🌐 網友說</p>
+              <textarea
+                value={place.notePublic ?? ''}
+                onChange={e => { e.stopPropagation(); onUpdateNotes(e.target.value, place.notePrivate ?? '') }}
+                onClick={e => e.stopPropagation()}
+                placeholder="網路評價、推薦菜色..."
+                className="w-full text-xs border rounded-lg p-2 resize-none focus:outline-none focus:ring-1 focus:ring-orange-400 bg-white"
+                rows={3}
+              />
+            </div>
+            <div>
+              <p className="text-xs font-medium text-gray-500 mb-1">📝 我們紀錄</p>
+              <textarea
+                value={place.notePrivate ?? place.note ?? ''}
+                onChange={e => { e.stopPropagation(); onUpdateNotes(place.notePublic ?? '', e.target.value) }}
+                onClick={e => e.stopPropagation()}
+                placeholder="自己的心得、停車資訊..."
+                className="w-full text-xs border rounded-lg p-2 resize-none focus:outline-none focus:ring-1 focus:ring-orange-400 bg-white"
+                rows={3}
+              />
+            </div>
+          </div>
           <div className="flex gap-1.5">
             <a
               href={place.mapsUrl}

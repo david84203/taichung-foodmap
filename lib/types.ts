@@ -59,6 +59,8 @@ export interface Place {
   rating: number
   mapsUrl: string
   status: PlaceStatus
-  note: string
+  note: string        // 舊欄位，保留相容性
+  notePublic: string  // 網友說
+  notePrivate: string // 我們自己紀錄
   addedAt: number
 }
