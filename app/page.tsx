@@ -38,9 +38,13 @@ export default function Home() {
   }
 
   async function handleDelete(place: Place) {
-    await deleteDoc(doc(db, 'foodmap', place.id))
-    setPlaces(prev => prev.filter(p => p.id !== place.id))
-    if (selectedPlace?.id === place.id) setSelectedPlace(null)
+    try {
+      await deleteDoc(doc(db, 'foodmap', place.id))
+      setPlaces(prev => prev.filter(p => p.id !== place.id))
+      if (selectedPlace?.id === place.id) setSelectedPlace(null)
+    } catch (e) {
+      alert(`刪除失敗：${e instanceof Error ? e.message : String(e)}`)
+    }
   }
 
   async function handleToggleStatus(place: Place) {
