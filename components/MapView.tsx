@@ -1,7 +1,6 @@
 'use client'
 import Map, { Marker, Popup } from 'react-map-gl/mapbox'
 import { useCallback } from 'react'
-import type { MapRef } from 'react-map-gl/mapbox'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { Place, CATEGORY_COLOR } from '@/lib/types'
 
@@ -12,11 +11,13 @@ interface Props {
 }
 
 export default function MapView({ places, selectedPlace, onSelectPlace }: Props) {
-  const onMapLoad = useCallback((e: { target: MapRef }) => {
-    const map = e.target
-    map.getStyle().layers.forEach(layer => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onMapLoad = useCallback((e: any) => {
+    const mbMap = e.target.getMap ? e.target.getMap() : e.target
+    const layers = mbMap.getStyle()?.layers ?? []
+    layers.forEach((layer: any) => {
       if (layer.type === 'symbol' && layer.layout?.['text-field']) {
-        map.setLayoutProperty(layer.id, 'text-field', ['coalesce', ['get', 'name_zh-Hant'], ['get', 'name']])
+        mbMap.setLayoutProperty(layer.id, 'text-field', ['coalesce', ['get', 'name_zh-Hant'], ['get', 'name']])
       }
     })
   }, [])
