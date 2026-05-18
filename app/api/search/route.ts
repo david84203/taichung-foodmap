@@ -6,6 +6,7 @@ export async function GET(req: NextRequest) {
 
   const res = await fetch('https://places.googleapis.com/v1/places:searchText', {
     method: 'POST',
+    cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
       'X-Goog-Api-Key': process.env.GOOGLE_PLACES_API_KEY!,
@@ -18,7 +19,10 @@ export async function GET(req: NextRequest) {
       maxResultCount: 3,
     }),
   })
-  const data = await res.json()
+  const rawText = await res.text()
+  console.log('[search] status:', res.status, 'body:', rawText.slice(0, 300))
+  if (!res.ok) return NextResponse.json({ error: `Places API ${res.status}`, detail: rawText.slice(0, 200) }, { status: 502 })
+  const data = JSON.parse(rawText)
 
   const results = (data.places ?? []).map((r: {
     id: string
