@@ -67,6 +67,7 @@ export default function AddPlaceModal({ onAdd, onClose }: Props) {
         notePublic,
         notePrivate,
       })
+      onClose()
     } catch {
       setError('加入失敗，請稍後再試')
     }

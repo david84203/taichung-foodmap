@@ -33,6 +33,7 @@ export default function Home() {
   async function handleAdd(placeData: Omit<Place, 'id' | 'addedAt'>) {
     const now    = Date.now()
     const docRef = await addDoc(collection(db, 'foodmap'), { ...placeData, addedAt: now })
+    console.log('Firestore write ok, id:', docRef.id)
     setPlaces(prev => [{ ...placeData, id: docRef.id, addedAt: now }, ...prev])
     setShowAdd(false)
   }
