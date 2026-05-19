@@ -17,6 +17,7 @@ export default function Home() {
   const [filterCategory, setFilterCategory] = useState<FoodCategory | null>(null)
   const [filterStatus, setFilterStatus]   = useState<PlaceStatus | null>(null)
   const [loading, setLoading]             = useState(true)
+  const [mobileTab, setMobileTab]         = useState<'map' | 'list'>('map')
 
   useEffect(() => {
     loadPlaces()
@@ -83,8 +84,37 @@ export default function Home() {
         </button>
       </header>
 
+      {/* 手機版 Tab 切換列 */}
+      <div className="md:hidden flex border-b border-gray-100 shrink-0">
+        <button
+          onClick={() => setMobileTab('map')}
+          className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
+            mobileTab === 'map'
+              ? 'text-orange-500 border-b-2 border-orange-500'
+              : 'text-gray-400'
+          }`}
+        >
+          🗺️ 地圖
+        </button>
+        <button
+          onClick={() => setMobileTab('list')}
+          className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
+            mobileTab === 'list'
+              ? 'text-orange-500 border-b-2 border-orange-500'
+              : 'text-gray-400'
+          }`}
+        >
+          📋 清單 {filtered.length > 0 && `(${filtered.length})`}
+        </button>
+      </div>
+
       <div className="flex-1 flex overflow-hidden">
-        <aside className="w-80 flex flex-col border-r border-gray-100 overflow-hidden shrink-0">
+        {/* 清單側欄：桌面永遠顯示，手機只在 list tab 顯示 */}
+        <aside className={`
+          flex flex-col border-r border-gray-100 overflow-hidden shrink-0
+          md:w-80 md:flex
+          ${mobileTab === 'list' ? 'flex w-full' : 'hidden md:flex'}
+        `}>
           <FilterBar
             activeCategory={filterCategory}
             activeStatus={filterStatus}
@@ -107,7 +137,10 @@ export default function Home() {
                   key={place.id}
                   place={place}
                   selected={selectedPlace?.id === place.id}
-                  onClick={() => setSelectedPlace(prev => prev?.id === place.id ? null : place)}
+                  onClick={() => {
+                    setSelectedPlace(prev => prev?.id === place.id ? null : place)
+                    setMobileTab('map')
+                  }}
                   onDelete={() => handleDelete(place)}
                   onToggleStatus={() => handleToggleStatus(place)}
                   onUpdateNotes={(pub, priv) => handleUpdateNotes(place, pub, priv)}
@@ -117,11 +150,18 @@ export default function Home() {
           </div>
         </aside>
 
-        <main className="flex-1 relative">
+        {/* 地圖：桌面永遠顯示，手機只在 map tab 顯示 */}
+        <main className={`
+          flex-1 relative
+          ${mobileTab === 'map' ? 'block' : 'hidden md:block'}
+        `}>
           <MapView
             places={filtered}
             selectedPlace={selectedPlace}
-            onSelectPlace={setSelectedPlace}
+            onSelectPlace={place => {
+              setSelectedPlace(place)
+              if (place) setMobileTab('map')
+            }}
           />
         </main>
       </div>
