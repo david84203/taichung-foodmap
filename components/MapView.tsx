@@ -58,7 +58,9 @@ export default function MapView({ places, selectedPlace, onSelectPlace }: Props)
           offset={12}
         >
           <div className="p-1 min-w-36">
-            <p className="font-semibold text-sm leading-tight">{selectedPlace.name}</p>
+            <p className="font-semibold text-sm leading-tight" style={{ color: CATEGORY_COLOR[selectedPlace.category] }}>
+              {selectedPlace.name}
+            </p>
             <p className="text-xs text-gray-600 mt-0.5">{selectedPlace.category}</p>
             {selectedPlace.rating > 0 && (
               <p className="text-xs text-gray-600">⭐ {selectedPlace.rating.toFixed(1)}</p>
