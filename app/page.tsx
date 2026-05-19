@@ -56,6 +56,12 @@ export default function Home() {
     setSelectedPlace(prev => prev?.id === place.id ? { ...prev, status: next } : prev)
   }
 
+  async function handleUpdateCategory(place: Place, category: FoodCategory) {
+    await updateDoc(doc(db, 'foodmap', place.id), { category })
+    setPlaces(prev => prev.map(p => p.id === place.id ? { ...p, category } : p))
+    setSelectedPlace(prev => prev?.id === place.id ? { ...prev, category } : prev)
+  }
+
   async function handleUpdateNotes(place: Place, notePublic: string, notePrivate: string) {
     await updateDoc(doc(db, 'foodmap', place.id), { notePublic, notePrivate })
     setPlaces(prev => prev.map(p => p.id === place.id ? { ...p, notePublic, notePrivate } : p))
@@ -144,6 +150,7 @@ export default function Home() {
                   onDelete={() => handleDelete(place)}
                   onToggleStatus={() => handleToggleStatus(place)}
                   onUpdateNotes={(pub, priv) => handleUpdateNotes(place, pub, priv)}
+                  onUpdateCategory={cat => handleUpdateCategory(place, cat)}
                 />
               ))
             )}

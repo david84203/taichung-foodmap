@@ -1,5 +1,6 @@
 'use client'
-import { Place, PlaceStatus, CATEGORY_BADGE } from '@/lib/types'
+import { useState } from 'react'
+import { Place, PlaceStatus, FoodCategory, ALL_CATEGORIES, CATEGORY_BADGE } from '@/lib/types'
 
 interface Props {
   place: Place
@@ -8,11 +9,14 @@ interface Props {
   onDelete: () => void
   onToggleStatus: () => void
   onUpdateNotes: (notePublic: string, notePrivate: string) => void
+  onUpdateCategory: (category: FoodCategory) => void
 }
 
 const PRICE = ['', '$', '$$', '$$$', '$$$$']
 
-export default function PlaceCard({ place, selected, onClick, onDelete, onToggleStatus, onUpdateNotes }: Props) {
+export default function PlaceCard({ place, selected, onClick, onDelete, onToggleStatus, onUpdateNotes, onUpdateCategory }: Props) {
+  const [editingCategory, setEditingCategory] = useState(false)
+
   return (
     <div
       className={`border rounded-xl p-3 cursor-pointer transition-colors ${
@@ -23,9 +27,13 @@ export default function PlaceCard({ place, selected, onClick, onDelete, onToggle
       <div className="flex items-start gap-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 flex-wrap mb-1">
-            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${CATEGORY_BADGE[place.category]}`}>
-              {place.category}
-            </span>
+            <button
+              onClick={e => { e.stopPropagation(); setEditingCategory(v => !v) }}
+              className={`text-xs px-2 py-0.5 rounded-full font-medium cursor-pointer hover:opacity-70 transition-opacity ${CATEGORY_BADGE[place.category]}`}
+              title="點擊更改分類"
+            >
+              {place.category} ✎
+            </button>
             <span className={`text-xs px-2 py-0.5 rounded-full ${
               place.status === 'want'
                 ? 'bg-yellow-100 text-yellow-700'
@@ -34,6 +42,31 @@ export default function PlaceCard({ place, selected, onClick, onDelete, onToggle
               {place.status === 'want' ? '想去' : '已去過'}
             </span>
           </div>
+
+          {/* 分類選擇器 */}
+          {editingCategory && (
+            <div
+              className="flex flex-wrap gap-1 mb-2 p-2 bg-gray-50 rounded-xl border border-gray-200"
+              onClick={e => e.stopPropagation()}
+            >
+              {ALL_CATEGORIES.map(c => (
+                <button
+                  key={c}
+                  onClick={() => {
+                    onUpdateCategory(c)
+                    setEditingCategory(false)
+                  }}
+                  className={`text-xs px-2 py-0.5 rounded-full transition-opacity ${
+                    c === place.category
+                      ? CATEGORY_BADGE[c] + ' ring-2 ring-offset-1 ring-current'
+                      : CATEGORY_BADGE[c] + ' opacity-50 hover:opacity-100'
+                  }`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          )}
           <p className="font-medium text-sm truncate">{place.name}</p>
           <p className="text-xs text-gray-500 truncate">{place.address}</p>
           <div className="flex items-center gap-2 mt-0.5">
