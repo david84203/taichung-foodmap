@@ -14,7 +14,7 @@ export default function Home() {
   const [places, setPlaces]               = useState<Place[]>([])
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null)
   const [showAdd, setShowAdd]             = useState(false)
-  const [filterCategory, setFilterCategory] = useState<FoodCategory | null>(null)
+  const [filterCategories, setFilterCategories] = useState<FoodCategory[]>([])
   const [filterStatus, setFilterStatus]   = useState<PlaceStatus | null>(null)
   const [loading, setLoading]             = useState(true)
   const [mobileTab, setMobileTab]         = useState<'map' | 'list'>('map')
@@ -68,9 +68,15 @@ export default function Home() {
     setSelectedPlace(prev => prev?.id === place.id ? { ...prev, notePublic, notePrivate } : prev)
   }
 
+  function toggleCategory(c: FoodCategory) {
+    setFilterCategories(prev =>
+      prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]
+    )
+  }
+
   const filtered = places.filter(p => {
-    if (filterCategory && p.category !== filterCategory) return false
-    if (filterStatus   && p.status   !== filterStatus)   return false
+    if (filterCategories.length > 0 && !filterCategories.includes(p.category)) return false
+    if (filterStatus && p.status !== filterStatus) return false
     return true
   })
 
@@ -122,9 +128,9 @@ export default function Home() {
           ${mobileTab === 'list' ? 'flex w-full' : 'hidden md:flex'}
         `}>
           <FilterBar
-            activeCategory={filterCategory}
+            activeCategories={filterCategories}
             activeStatus={filterStatus}
-            onCategoryChange={setFilterCategory}
+            onCategoryToggle={toggleCategory}
             onStatusChange={setFilterStatus}
             total={filtered.length}
           />

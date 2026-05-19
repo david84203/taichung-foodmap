@@ -2,14 +2,14 @@
 import { ALL_CATEGORIES, FoodCategory, PlaceStatus } from '@/lib/types'
 
 interface Props {
-  activeCategory: FoodCategory | null
+  activeCategories: FoodCategory[]
   activeStatus: PlaceStatus | null
-  onCategoryChange: (c: FoodCategory | null) => void
+  onCategoryToggle: (c: FoodCategory) => void
   onStatusChange: (s: PlaceStatus | null) => void
   total: number
 }
 
-export default function FilterBar({ activeCategory, activeStatus, onCategoryChange, onStatusChange, total }: Props) {
+export default function FilterBar({ activeCategories, activeStatus, onCategoryToggle, onStatusChange, total }: Props) {
   return (
     <div className="p-3 border-b border-gray-100 space-y-2">
       <div className="flex items-center justify-between">
@@ -32,19 +32,30 @@ export default function FilterBar({ activeCategory, activeStatus, onCategoryChan
       </div>
 
       <div className="flex gap-1 flex-wrap">
-        {ALL_CATEGORIES.map(c => (
+        {ALL_CATEGORIES.map(c => {
+          const active = activeCategories.includes(c)
+          return (
+            <button
+              key={c}
+              onClick={() => onCategoryToggle(c)}
+              className={`px-2 py-0.5 rounded-full text-xs transition-colors ${
+                active
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {c}
+            </button>
+          )
+        })}
+        {activeCategories.length > 0 && (
           <button
-            key={c}
-            onClick={() => onCategoryChange(c === activeCategory ? null : c)}
-            className={`px-2 py-0.5 rounded-full text-xs transition-colors ${
-              activeCategory === c
-                ? 'bg-orange-500 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+            onClick={() => activeCategories.forEach(c => onCategoryToggle(c))}
+            className="px-2 py-0.5 rounded-full text-xs bg-red-50 text-red-400 hover:bg-red-100 transition-colors"
           >
-            {c}
+            清除
           </button>
-        ))}
+        )}
       </div>
     </div>
   )
