@@ -39,7 +39,7 @@ export default function FilterBar({ activeCategory, activeStatus, onCategoryChan
             className={`px-2 py-0.5 rounded-full text-xs transition-colors ${
               activeCategory === c
                 ? 'bg-orange-500 text-white'
-                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
             {c}

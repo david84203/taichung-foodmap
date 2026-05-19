@@ -68,7 +68,7 @@ export default function PlaceCard({ place, selected, onClick, onDelete, onToggle
             </div>
           )}
           <p className="font-medium text-sm truncate">{place.name}</p>
-          <p className="text-xs text-gray-500 truncate">{place.address}</p>
+          <p className="text-xs text-gray-600 truncate">{place.address}</p>
           <div className="flex items-center gap-2 mt-0.5">
             {place.rating > 0 && <span className="text-xs text-gray-600">⭐ {place.rating.toFixed(1)}</span>}
             {place.priceLevel > 0 && <span className="text-xs text-gray-600">{PRICE[place.priceLevel]}</span>}

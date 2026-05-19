@@ -126,7 +126,7 @@ export default function AddPlaceModal({ onAdd, onClose }: Props) {
             <>
               <div className="border border-orange-200 bg-orange-50 rounded-xl p-3 mb-4">
                 <p className="font-medium text-sm">{selected.name}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{selected.address}</p>
+                <p className="text-xs text-gray-600 mt-0.5">{selected.address}</p>
               </div>
 
               <div className="mb-4">

@@ -59,9 +59,9 @@ export default function MapView({ places, selectedPlace, onSelectPlace }: Props)
         >
           <div className="p-1 min-w-36">
             <p className="font-semibold text-sm leading-tight">{selectedPlace.name}</p>
-            <p className="text-xs text-gray-500 mt-0.5">{selectedPlace.category}</p>
+            <p className="text-xs text-gray-600 mt-0.5">{selectedPlace.category}</p>
             {selectedPlace.rating > 0 && (
-              <p className="text-xs text-gray-500">⭐ {selectedPlace.rating.toFixed(1)}</p>
+              <p className="text-xs text-gray-600">⭐ {selectedPlace.rating.toFixed(1)}</p>
             )}
             <a
               href={selectedPlace.mapsUrl}

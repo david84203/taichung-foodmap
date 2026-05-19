@@ -97,7 +97,7 @@ export default function Home() {
           className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
             mobileTab === 'map'
               ? 'text-orange-500 border-b-2 border-orange-500'
-              : 'text-gray-500'
+              : 'text-gray-600'
           }`}
         >
           🗺️ 地圖
@@ -107,7 +107,7 @@ export default function Home() {
           className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
             mobileTab === 'list'
               ? 'text-orange-500 border-b-2 border-orange-500'
-              : 'text-gray-500'
+              : 'text-gray-600'
           }`}
         >
           📋 清單 {filtered.length > 0 && `(${filtered.length})`}
@@ -130,9 +130,9 @@ export default function Home() {
           />
           <div className="flex-1 overflow-y-auto p-3 space-y-2">
             {loading ? (
-              <p className="text-sm text-gray-400 text-center mt-10">載入中...</p>
+              <p className="text-sm text-gray-600 text-center mt-10">載入中...</p>
             ) : filtered.length === 0 ? (
-              <p className="text-sm text-gray-400 text-center mt-10">
+              <p className="text-sm text-gray-600 text-center mt-10">
                 {places.length === 0
                   ? '點右上角「新增」加入第一家 🍜'
                   : '沒有符合條件的餐廳'}
