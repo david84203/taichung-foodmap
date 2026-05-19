@@ -35,10 +35,10 @@ export default function PlaceCard({ place, selected, onClick, onDelete, onToggle
             </span>
           </div>
           <p className="font-medium text-sm truncate">{place.name}</p>
-          <p className="text-xs text-gray-400 truncate">{place.address}</p>
+          <p className="text-xs text-gray-500 truncate">{place.address}</p>
           <div className="flex items-center gap-2 mt-0.5">
-            {place.rating > 0 && <span className="text-xs text-gray-500">⭐ {place.rating.toFixed(1)}</span>}
-            {place.priceLevel > 0 && <span className="text-xs text-gray-400">{PRICE[place.priceLevel]}</span>}
+            {place.rating > 0 && <span className="text-xs text-gray-600">⭐ {place.rating.toFixed(1)}</span>}
+            {place.priceLevel > 0 && <span className="text-xs text-gray-600">{PRICE[place.priceLevel]}</span>}
           </div>
         </div>
       </div>
@@ -47,7 +47,7 @@ export default function PlaceCard({ place, selected, onClick, onDelete, onToggle
         <div className="mt-3 pt-3 border-t border-orange-200 space-y-2">
           {place.hours.length > 0 && (
             <div>
-              <p className="text-xs font-medium text-gray-500 mb-1">營業時間</p>
+              <p className="text-xs font-medium text-gray-700 mb-1">營業時間</p>
               {place.hours.map((h, i) => (
                 <p key={i} className="text-xs text-gray-600">{h}</p>
               ))}
@@ -58,7 +58,7 @@ export default function PlaceCard({ place, selected, onClick, onDelete, onToggle
           )}
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <p className="text-xs font-medium text-gray-500 mb-1">🌐 網友說</p>
+              <p className="text-xs font-medium text-gray-700 mb-1">🌐 網友說</p>
               <textarea
                 value={place.notePublic ?? ''}
                 onChange={e => { e.stopPropagation(); onUpdateNotes(e.target.value, place.notePrivate ?? '') }}
@@ -69,7 +69,7 @@ export default function PlaceCard({ place, selected, onClick, onDelete, onToggle
               />
             </div>
             <div>
-              <p className="text-xs font-medium text-gray-500 mb-1">📝 我們紀錄</p>
+              <p className="text-xs font-medium text-gray-700 mb-1">📝 我們紀錄</p>
               <textarea
                 value={place.notePrivate ?? place.note ?? ''}
                 onChange={e => { e.stopPropagation(); onUpdateNotes(place.notePublic ?? '', e.target.value) }}

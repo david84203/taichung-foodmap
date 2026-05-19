@@ -108,7 +108,7 @@ export default function AddPlaceModal({ onAdd, onClose }: Props) {
 
               {results.length > 0 && (
                 <div className="space-y-2">
-                  <p className="text-xs text-gray-400 mb-1">請選擇正確地點：</p>
+                  <p className="text-xs text-gray-600 mb-1">請選擇正確地點：</p>
                   {results.map(r => (
                     <button
                       key={r.placeId}
@@ -116,7 +116,7 @@ export default function AddPlaceModal({ onAdd, onClose }: Props) {
                       className="w-full text-left border rounded-xl p-3 hover:bg-orange-50 hover:border-orange-300 transition-colors"
                     >
                       <p className="font-medium text-sm">{r.name}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{r.address}</p>
+                      <p className="text-xs text-gray-600 mt-0.5">{r.address}</p>
                     </button>
                   ))}
                 </div>

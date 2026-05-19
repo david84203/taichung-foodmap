@@ -91,7 +91,7 @@ export default function Home() {
           className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
             mobileTab === 'map'
               ? 'text-orange-500 border-b-2 border-orange-500'
-              : 'text-gray-400'
+              : 'text-gray-500'
           }`}
         >
           🗺️ 地圖
@@ -101,7 +101,7 @@ export default function Home() {
           className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
             mobileTab === 'list'
               ? 'text-orange-500 border-b-2 border-orange-500'
-              : 'text-gray-400'
+              : 'text-gray-500'
           }`}
         >
           📋 清單 {filtered.length > 0 && `(${filtered.length})`}

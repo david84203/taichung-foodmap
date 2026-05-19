@@ -28,7 +28,7 @@ export default function FilterBar({ activeCategory, activeStatus, onCategoryChan
             </button>
           ))}
         </div>
-        <span className="text-xs text-gray-400">{total} 間</span>
+        <span className="text-xs text-gray-600">{total} 間</span>
       </div>
 
       <div className="flex gap-1 flex-wrap">
