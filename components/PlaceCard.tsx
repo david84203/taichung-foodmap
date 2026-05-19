@@ -12,7 +12,6 @@ interface Props {
   onUpdateCategory: (category: FoodCategory) => void
 }
 
-const PRICE = ['', '$', '$$', '$$$', '$$$$']
 
 export default function PlaceCard({ place, selected, onClick, onDelete, onToggleStatus, onUpdateNotes, onUpdateCategory }: Props) {
   const [editingCategory, setEditingCategory] = useState(false)
@@ -69,10 +68,9 @@ export default function PlaceCard({ place, selected, onClick, onDelete, onToggle
           )}
           <p className="font-semibold text-sm text-gray-900 truncate">{place.name}</p>
           <p className="text-xs text-gray-600 truncate">{place.address}</p>
-          <div className="flex items-center gap-2 mt-0.5">
-            {place.rating > 0 && <span className="text-xs text-gray-600">⭐ {place.rating.toFixed(1)}</span>}
-            {place.priceLevel > 0 && <span className="text-xs text-gray-600">{PRICE[place.priceLevel]}</span>}
-          </div>
+          {place.rating > 0 && (
+            <span className="text-xs text-gray-600 mt-0.5 block">⭐ {place.rating.toFixed(1)}</span>
+          )}
         </div>
       </div>
 
