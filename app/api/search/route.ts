@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { rateLimit } from '@/lib/ratelimit'
 
 export async function GET(req: NextRequest) {
+  if (!rateLimit(req)) return NextResponse.json({ error: 'too many requests' }, { status: 429 })
+
   const query = req.nextUrl.searchParams.get('q')
   if (!query) return NextResponse.json({ error: 'missing query' }, { status: 400 })
 

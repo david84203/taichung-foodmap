@@ -1,0 +1,15 @@
+rules_version = '2';
+
+// 台中美食地圖：私人站台，只有登入者（david84203@gmail.com 共用帳號）能讀寫。
+// 未登入的訪客連讀都不行 —— 同時擋掉「任何人可刪改」與「notePrivate 私人備註外洩」兩個漏洞。
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /foodmap/{docId} {
+      allow read, write: if request.auth != null;
+    }
+    // 其餘集合一律拒絕
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

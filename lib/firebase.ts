@@ -1,5 +1,6 @@
 import { initializeApp, getApps } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
+import { getAuth, type Auth } from 'firebase/auth'
 
 const firebaseConfig = {
   apiKey:            process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -12,3 +13,7 @@ const firebaseConfig = {
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
 export const db = getFirestore(app)
+// 只在瀏覽器端初始化 Auth：避免 SSR/預渲染階段就讀 API key 而拋錯
+export const auth: Auth = typeof window === 'undefined'
+  ? (undefined as unknown as Auth)
+  : getAuth(app)
